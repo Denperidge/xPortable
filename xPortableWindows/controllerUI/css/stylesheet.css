@@ -144,7 +144,7 @@ button {
     right: 10px;
 }
 
-#leftThumb {
+#leftThumb, #rightThumb {
     width: 10vh;
     height: 10vh;
 

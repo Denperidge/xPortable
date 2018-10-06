@@ -50,16 +50,19 @@ namespace xPortableWindows
             string button = e.Data.Split('/')[0];
             string value = e.Data.Split('/')[1];
 
-
             // Joysticks
             if (button == "0" || button == "1" || button == "2" || button == "3")
             {
-
-                //report.SetAxis(Xbox360Axes.LeftThumbX, 32767);
-                // value = ..
-                // TODO joysticks
+                string[] percentages = value.Split(';');
                 switch (button)
                 {
+                    case "0":
+                        report.SetAxis(Xbox360Axes.LeftThumbX, (short)(32767 * int.Parse(percentages[0]) / 100));
+                        report.SetAxis(Xbox360Axes.LeftThumbY, (short)(32767 * int.Parse(percentages[1]) / 100));
+                        controller.SendReport(report);
+                        return;
+                    case "1":
+                        return;
                 }
             }
             // LT/RT
@@ -87,7 +90,6 @@ namespace xPortableWindows
                 {
                     case "4":
                         report.SetButtonState(Xbox360Buttons.A, pressed);
-                        report.SetAxis(Xbox360Axes.LeftThumbX, short.MaxValue);
                         controller.SendReport(report);
                         return;
                     case "5":
@@ -96,7 +98,6 @@ namespace xPortableWindows
                         return;
                     case "6":
                         report.SetButtonState(Xbox360Buttons.B, pressed);
-                        report.SetAxis(Xbox360Axes.LeftThumbX, short.MinValue);
                         controller.SendReport(report);
                         return;
                     case "7":

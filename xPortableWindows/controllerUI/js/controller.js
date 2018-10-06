@@ -5,10 +5,8 @@ function SetupUserInterface() {
     // Translation table: which code reffers to which control
     var table =
     {
-        "Left_ThumbX": "0",
-        "Left_ThumbY": "1",
-        "Right-ThumbX": "2",
-        "Right-ThumbY": "3",
+        "Left_Thumb": "0",
+        "Right-Thumb": "1",
 
         "A": "4",
         "X": "5",
@@ -41,22 +39,18 @@ function SetupUserInterface() {
     }
 
     // 0-3 are joysticks
-
-    var le = document.getElementById("leftThumbContainer");
+    var leftThumbContainer = document.getElementById("leftThumbContainer");
     
-    le.addEventListener("mousedown", startMoveLeftJoystick);
-    le.addEventListener("touchstart", startMoveLeftJoystick);
+    leftThumbContainer.addEventListener("mousedown", startMoveLeftJoystick);
+    leftThumbContainer.addEventListener("touchstart", startMoveLeftJoystick);
 
-    le.addEventListener("mousemove", moveLeftJoystick, true);
-    le.addEventListener("touchmove", moveLeftJoystick, true);
+    leftThumbContainer.addEventListener("mousemove", moveLeftJoystick);
+    leftThumbContainer.addEventListener("touchmove", moveLeftJoystick);
     
     document.addEventListener("mouseup", stopMoveLeftJoystick);
-    //le.addEventListener("mouseout", stopMoveLeftJoystick);
     document.addEventListener("touchend", stopMoveLeftJoystick);
-    //le.addEventListener("touchcancel", stopMoveLeftJoystick);
 
     var rightThumb = document.getElementById("rightThumb");
-     // TODO use translate
 
 
     // Start at 4  (joysticks already handled)
@@ -76,124 +70,93 @@ function SetupUserInterface() {
 }
 SetupUserInterface();
 
-var leftThumbStartX;
-var leftThumbStartY;
-var leftThumbOriginalLocation;
+
+// JOYSTICK CODE
+// For reasons of optimization, it is assumed that:
+// Both joytstick containers have the same width/height
+// And that the width and height of these containers are equal
+
+
+
+
 var leftThumbDown = false;
-var leftThumbMiddle;
-//var leftThumbSendInterval;
-
-var rightThumbStartX;
-var rightThumbStartY;
-var rightThumbOriginalLocation;
-
 var leftThumb = document.getElementById("leftThumb");
+var thumbMax;
+var thumbMiddle;
+var leftContainerLeftOffset;
+var leftContainerTopOffset;
 
+// Calculate the middle and max values of the joysticks
+function CalculateThumbVariables() {
+    thumbMax = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).width.replace("px", ""));
+    thumbMiddle = thumbMax / 2;
 
-var leftThumbOffsetX;
-var leftContainerOffset;
-var leftThumbMax;
+    leftContainerLeftOffset = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).left.replace("px", ""));
+    leftContainerTopOffset = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).top.replace("px", ""));
+}
+window.addEventListener("resize", CalculateThumbVariables);
+CalculateThumbVariables();  // Run once at startup
 
 function startMoveLeftJoystick(e) {
     leftThumbDown = true;
-    leftThumbOffsetX = leftThumb.offsetLeft - e.clientX;
-    //leftThumb.style.left = e.layerX + "px";
-    leftContainerOffset = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).left.replace("px", ""));
-    leftThumbMax = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).width.replace("px", ""));
-    leftThumbMiddle = leftThumbMax / 2;
-
-    //setInterval(moveLeftJoystick, 350);
-    
-    /*
-    leftThumb.addEventListener("mousemove", moveLeftJoystick);
-    leftThumb.addEventListener("touchmove", moveLeftJoystick);
-    */
-    
-    //joystick.left =
-    /*
-    leftThumbOriginalLocation = window.getComputedStyle(e.srcElement).transform;
-    leftThumbStartX = e.screenX;
-    leftThumbStartY = e.screenY;
-
-    leftThumb.addEventListener("mousemove", moveLeftJoystick);
-    leftThumb.addEventListener("touchmove", moveLeftJoystick);
-    */
+    leftThumb.style.left = e.clientX - leftContainerLeftOffset + "px";
+    leftThumb.style.top = e.clientY - leftContainerTopOffset + "px";
 }
 
 function moveLeftJoystick(e) {
+    console.log(e);
     e.preventDefault();
     if (leftThumbDown)
     {
-        var mousePosition = e.screenX - leftContainerOffset;
+        var value = "0/";
 
-        var mouseOverLeft = mousePosition < 0;
-        var mouseOverRight = mousePosition > leftThumbMax;
+        // Calculate how far the joystick is from the center to the box in percentage
+        function CalculatePercentage (mouseValue, styleName){
+            var mouseOverMin = mouseValue < 0;
+            var mouseOverMax = mouseValue > thumbMax;
 
-        //clearInterval(leftThumbSendInterval);
+            // On the X-axis, left is -100% and right is 100%
+            // On the Y-axis, top should be 100% and bottom -100%
+            // however, because CSS has to use left/top for positioning things like this,
+            // recalculations have to be made if styleName == top
 
-        /*
-        var Send = function (mouse) {
-            return function send(e) {
-                //ws.send(buttonID + "/" + value);
-                console.log("Send: " + mouse);
+            if (!mouseOverMin && !mouseOverMax) {
+                leftThumb.style[styleName] = mouseValue + "px";
+                var joystickValue = parseInt((mouseValue - thumbMiddle) / thumbMiddle * 100).toString();
+                console.log(joystickValue);
+                value += joystickValue * ((styleName == "top") ? -1 : 1);
+            } 
+            // Don't move the joystick if mouse is outside of the box, just apply min/max value
+            else if (mouseOverMin) {
+                leftThumb.style[styleName] = "0px";
+                value += (styleName == "top") ? "100" : "-100";  // %
+                // TODO vibrate
+            } else if (mouseOverMax) {
+                leftThumb.style[styleName] = thumbMax + "px";
+                value += (styleName == "top") ? "-100" : "100";  // %
+                // TODO vibrate
             }
         }
-        */
 
-        
-        if (!mouseOverLeft && !mouseOverRight) {
-            console.log("Send: " + mousePosition);
-            leftThumb.style.left = mousePosition + "px";
-            //leftThumbSendInterval = setInterval(Send(mousePosition), 350);
-            
-        } else if (mouseOverLeft){
+        console.log(e);
+        var mouseX = (e.clientX - leftContainerLeftOffset) || (e.targetTouches[0].clientX - leftContainerLeftOffset);
+        var mouseY = e.clientY - leftContainerTopOffset || (e.targetTouches[0].clientY - leftContainerTopOffset);
 
-            console.log(0);
-            //leftThumbSendInterval = setInterval(Send(0), 350);
-        } else if (mouseOverRight) {
-            console.log(150);
-            //leftThumbSendInterval = setInterval(Send(150), 350);
-        }//else stopMoveLeftJoystick();
-        //console.log(e.screenX - leftContainerOffset);
-        
-        //leftThumb.style.left = (e.clientX + leftThumbOffsetX) + "px";
-        //leftThumb.style.left = e.layerX;
+        CalculatePercentage(mouseX, "left");
+        value += ";"
+        CalculatePercentage(mouseY, "top");
+
+        ws.send(value);
     }
-    
-    //leftThumb.style.top = e.offsetY + "px";
-    /*
-    var joystick = e.srcElement;
-    console.log(e.screenX);
-    console.log(leftThumbStartX);
-    var transformValues = window.getComputedStyle(joystick).transform.split(", ");
-    transformValues[4] = (parseFloat(transformValues[4]) + e.screenX - leftThumbStartX) + "";
-    transformValues[5] = (parseFloat(transformValues[5]) + e.screenY - leftThumbStartY) + "";
-    console.log(transformValues.join(", ") + ")")
-    joystick.style.transform = transformValues.join(", ") + ")";
-    */
 }
 
 function NoLongerMoveJoystick(e){
     stopMoveLeftJoystick();
 }
-//leftThumb.addEventListener("mouseout", NoLongerMoveJoystick);
 
 function stopMoveLeftJoystick(e) {
-
     leftThumbDown = false;
-    console.log("stop");
-    
-    //clearInterval(leftThumbSendInterval);
 
     leftThumb.style.left = "50%";
-
-    /*
-    leftThumb.removeEventListener("mousemove", moveLeftJoystick, true);
-    leftThumb.removeEventListener("touchmove", moveLeftJoystick, true);
-    */
-    /*
-    var leftThumb = e.srcElement;
-
-    var joystick = leftThumb.style.transform = leftThumbOriginalLocation;
-    */
+    leftThumb.style.top = "50%";
 }
