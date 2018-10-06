@@ -3,43 +3,43 @@
 function SetupUserInterface() {
     // Translation table: which code reffers to which control
     var table =
-    {
-        "Left_Thumb": "0",
-        "Right-Thumb": "1",
+        {
+            "Left_Thumb": "0",
+            "Right-Thumb": "1",
 
-        "A": "2",
-        "X": "3",
-        "B": "4",
-        "Y": "5",
+            "A": "2",
+            "X": "3",
+            "B": "4",
+            "Y": "5",
 
-        "LT": "6",
-        "RT": "7",
-        "LB": "8",
-        "RB": "9",
+            "LT": "6",
+            "RT": "7",
+            "LB": "8",
+            "RB": "9",
 
-        "D_Pad_Left": "10",
-        "D_Pad_Up": "11",
-        "D_Pad_Right": "12",
-        "D_Pad_Down": "13",
+            "D_Pad_Left": "10",
+            "D_Pad_Up": "11",
+            "D_Pad_Right": "12",
+            "D_Pad_Down": "13",
 
-        "Left_Thumb_Press": "14",
-        "Right_Thumb_Press": "15",
+            "Left_Thumb_Press": "14",
+            "Right_Thumb_Press": "15",
 
-        "Start": "16",
-        "Guide": "17"
-    };
+            "Start": "16",
+            "Guide": "17"
+        };
 
     var buttonIDs = Object.keys(table);
 
     // 0-3 are joysticks
     var leftThumbContainer = document.getElementById("leftThumbContainer");
-    
+
     leftThumbContainer.addEventListener("mousedown", startMoveLeftJoystick);
     leftThumbContainer.addEventListener("touchstart", startMoveLeftJoystick);
 
     leftThumbContainer.addEventListener("mousemove", moveLeftJoystick);
     leftThumbContainer.addEventListener("touchmove", moveLeftJoystick);
-    
+
     document.addEventListener("mouseup", stopMoveLeftJoystick);
     document.addEventListener("touchend", stopMoveLeftJoystick);
 
@@ -49,7 +49,8 @@ function SetupUserInterface() {
     // value is 1 if pressed, 0 if no longer pressed
     var Send = function (buttonID, value) {
         return function send(e) {
-            ws.send(buttonID + "/" + value);
+            //ws.send(buttonID + "/" + value);
+            report += buttonID + "/" + value + "_";
         }
     }
     // Start at 2  (joysticks already handled)
@@ -101,14 +102,12 @@ function startMoveLeftJoystick(e) {
 }
 
 function moveLeftJoystick(e) {
-    console.log(e);
     e.preventDefault();
-    if (leftThumbDown)
-    {
+    if (leftThumbDown) {
         var value = "0/";
 
         // Calculate how far the joystick is from the center to the box in percentage
-        function CalculatePercentage (mouseValue, styleName){
+        function CalculatePercentage(mouseValue, styleName) {
             var mouseOverMin = mouseValue < 0;
             var mouseOverMax = mouseValue > thumbMax;
 
@@ -123,7 +122,7 @@ function moveLeftJoystick(e) {
                 var joystickValue = parseInt((mouseValue - thumbMiddle) / thumbMiddle * 100).toString();
                 console.log(joystickValue);
                 value += joystickValue * ((styleName == "top") ? -1 : 1);
-            } 
+            }
             // Don't move the joystick if mouse is outside of the box, just apply min/max value
             else if (mouseOverMin) {
                 leftThumb.style[styleName] = "0px";
@@ -144,14 +143,29 @@ function moveLeftJoystick(e) {
         value += ";"
         CalculatePercentage(mouseY, "top");
 
-        ws.send(value);
+        //ws.send(value);
+        report += value + "_";
+        inter = setInterval(function () { report += value + "_"; }, 100)
     }
 }
 
+var inter;
+
 function stopMoveLeftJoystick(e) {
-    ws.send("0/0;0");
+    clearInterval(inter);
+    report += "0/0;0_";
     leftThumbDown = false;
 
     leftThumb.style.left = "50%";
     leftThumb.style.top = "50%";
 }
+
+var report = "";
+// WebSocket code
+setInterval(function () {
+    if (report != "") {
+        console.log(report);
+        ws.send(report);
+        report = "";
+    }
+}, 100);
