@@ -8,26 +8,26 @@ function SetupUserInterface() {
         "Left_Thumb": "0",
         "Right-Thumb": "1",
 
-        "A": "4",
-        "X": "5",
-        "B": "6",
-        "Y": "7",
+        "A": "2",
+        "X": "3",
+        "B": "4",
+        "Y": "5",
 
-        "LT": "8",
-        "RT": "9",
-        "LB": "10",
-        "RB": "11",
+        "LT": "6",
+        "RT": "7",
+        "LB": "8",
+        "RB": "9",
 
-        "D_Pad_Left": "12",
-        "D_Pad_Up": "13",
-        "D_Pad_Right": "14",
-        "D_Pad_Down": "15",
+        "D_Pad_Left": "10",
+        "D_Pad_Up": "11",
+        "D_Pad_Right": "12",
+        "D_Pad_Down": "13",
 
-        "Left_Thumb_Press": "16",
-        "Right_Thumb_Press": "17",
+        "Left_Thumb_Press": "14",
+        "Right_Thumb_Press": "15",
 
-        "Guide": "18",
-        "Start": "19"
+        "Start": "16",
+        "Guide": "17"
     };
 
     var buttonIDs = Object.keys(table);

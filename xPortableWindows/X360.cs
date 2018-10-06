@@ -51,7 +51,7 @@ namespace xPortableWindows
             string value = e.Data.Split('/')[1];
 
             // Joysticks
-            if (button == "0" || button == "1" || button == "2" || button == "3")
+            if (button == "0" || button == "1")
             {
                 string[] percentages = value.Split(';');
                 switch (button)
@@ -66,7 +66,7 @@ namespace xPortableWindows
                 }
             }
             // LT/RT
-            else if (button == "8" || button == "9")
+            else if (button == "6" || button == "7")
             {
                 // If pressed, max value. Else, 0
                 short pressed = (value == "1") ? short.MaxValue : (short)0;
@@ -88,60 +88,60 @@ namespace xPortableWindows
                 bool pressed = (value == "1") ? true : false;
                 switch (button)
                 {
-                    case "4":
+                    case "2":
                         report.SetButtonState(Xbox360Buttons.A, pressed);
                         controller.SendReport(report);
                         return;
-                    case "5":
+                    case "3":
                         report.SetButtonState(Xbox360Buttons.X, pressed);
                         controller.SendReport(report);
                         return;
-                    case "6":
+                    case "4":
                         report.SetButtonState(Xbox360Buttons.B, pressed);
                         controller.SendReport(report);
                         return;
-                    case "7":
+                    case "5":
                         report.SetButtonState(Xbox360Buttons.Y, pressed);
                         controller.SendReport(report);
                         return;
-                    case "10":
+                    case "8":
                         report.SetButtonState(Xbox360Buttons.LeftShoulder, pressed);
                         controller.SendReport(report);
                         return;
-                    case "11":
+                    case "9":
                         report.SetButtonState(Xbox360Buttons.RightShoulder, pressed);
                         controller.SendReport(report);
                         return;
-                    case "12":
+                    case "10":
                         report.SetButtonState(Xbox360Buttons.Left, pressed);
                         controller.SendReport(report);
                         return;
-                    case "13":
+                    case "11":
                         report.SetButtonState(Xbox360Buttons.Up, pressed);
                         controller.SendReport(report);
                         return;
-                    case "14":
+                    case "12":
                         report.SetButtonState(Xbox360Buttons.Right, pressed);
                         controller.SendReport(report);
                         return;
-                    case "15":
+                    case "13":
                         report.SetButtonState(Xbox360Buttons.Down, pressed);
                         controller.SendReport(report);
                         return;
-                    case "16":
+                    case "14":
                         report.SetButtonState(Xbox360Buttons.LeftThumb, pressed);
                         controller.SendReport(report);
                         return;
-                    case "17":
+                    case "15":
                         report.SetButtonState(Xbox360Buttons.RightThumb, pressed);
                         controller.SendReport(report);
                         return;
-                    case "18":
-                        report.SetButtonState(Xbox360Buttons.Guide, pressed);
+                    case "16":
+                        report.SetButtonState(Xbox360Buttons.Start, pressed);
                         controller.SendReport(report);
                         return;
-                    case "19":
-                        report.SetButtonState(Xbox360Buttons.Start, pressed);
+                    case "17":
+                        report.SetButtonState(Xbox360Buttons.Guide, pressed);
                         controller.SendReport(report);
                         return;
                 }
