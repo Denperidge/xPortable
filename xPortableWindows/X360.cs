@@ -87,6 +87,7 @@ namespace xPortableWindows
                 {
                     case "4":
                         report.SetButtonState(Xbox360Buttons.A, pressed);
+                        report.SetAxis(Xbox360Axes.LeftThumbX, short.MaxValue);
                         controller.SendReport(report);
                         return;
                     case "5":
@@ -95,6 +96,7 @@ namespace xPortableWindows
                         return;
                     case "6":
                         report.SetButtonState(Xbox360Buttons.B, pressed);
+                        report.SetAxis(Xbox360Axes.LeftThumbX, short.MinValue);
                         controller.SendReport(report);
                         return;
                     case "7":

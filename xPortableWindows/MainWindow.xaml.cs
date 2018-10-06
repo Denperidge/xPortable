@@ -90,9 +90,10 @@ namespace xPortableWindows
                 else if (line.StartsWith("<img"))
                 {
                     // Read SVG
-                    string svgname = "controllerUI/" + line.Substring(line.IndexOf("src=\"") + 5).Replace("\"/>", "");
-                    string svg = System.IO.File.ReadAllText(svgname);
+                    string svgname = "controllerUI/" + line.Substring(line.IndexOf("src=\"") + 5).Replace("\"/>", "").Replace("\" />", "");
 
+                    string svg = System.IO.File.ReadAllText(svgname);
+                    
                     // The id that should be set, like D_Pad_Down
                     string id = svgname.Split('/')[svgname.Split('/').Length - 1].Replace(".svg", "");
 
