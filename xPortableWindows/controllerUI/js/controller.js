@@ -53,8 +53,8 @@ function SetupUserInterface() {
     var rightThumb = document.getElementById("rightThumb");
 
 
-    // Start at 4  (joysticks already handled)
-    for (var i = 4; i < buttonIDs.length; i++) {
+    // Start at 2  (joysticks already handled)
+    for (var i = 2; i < buttonIDs.length; i++) {
         var button = document.getElementById(buttonIDs[i]);
         if (button == undefined) continue;
         var id = table[buttonIDs[i]];
