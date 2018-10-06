@@ -1,9 +1,9 @@
 var ws;
-var url;  // Example: ws://190.160.0.100:7000
+var url;  // Example: ws://10.180.0.120:7000
 
 // Connect websocket, add handler for disconnected alert. This is for every connection
 function CreateWebsocket(suffix) {
-    var url = "ws://{ip}:7000";
+    var url = "ws://" + location.hostname + ":7000";
 
     ws = new WebSocket(url + suffix);
     ws.addEventListener("message", function(event) {

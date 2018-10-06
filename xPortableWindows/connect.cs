@@ -21,6 +21,9 @@ namespace xPortableWindows
             Xbox360Controller newController = (Xbox360Controller)sender;
             newController.FeedbackReceived -= connectClientToPort;
 
+            Console.WriteLine(eventArgs);
+            Console.WriteLine(eventArgs.LedNumber);
+
             // ledNumber returns 0 for player 1, 1 for player 2, 2 for player 3, 3 for player 4
             int port = eventArgs.LedNumber + 1;
             if (port > 4)

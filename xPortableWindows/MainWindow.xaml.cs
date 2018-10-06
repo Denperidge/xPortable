@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -33,6 +34,7 @@ namespace xPortableWindows
         string port;
         HttpListener listener;  // Serve the html/css/js of the controller
         string controllerUI;  // String of html/css/js, the UI for clients
+        Process server;
 
 
         public MainWindow()
@@ -52,13 +54,24 @@ namespace xPortableWindows
                     ip = endPoint.Address.ToString();
                 }
                 // IP has been found, start the HTTPServer
-                StartHttpServer();
+                //StartHttpServer();
             }
             catch
             {
                 MessageBox.Show("Ip could not be automatically assigned! Please type it manually into the IP box");
                 ShowOrHideIp(btnShowOrHideIp, null);  // By default it is hidden, so firing this will show it
             }
+
+            server = Process.Start(new ProcessStartInfo()
+            {
+                FileName = "server.exe",
+                UseShellExecute = false,
+                WorkingDirectory = @"S:\Projecten\xPortable\xPortableWindows\bin\Debug",
+                CreateNoWindow = true
+            });
+            
+            //MessageBox.Show(process.StandardOutput.ReadToEnd());
+            //MessageBox.Show(process.StandardError.ReadToEnd());
 
             Globals.client = new ViGEmClient();
 
@@ -93,11 +106,11 @@ namespace xPortableWindows
                     string svgname = "controllerUI/" + line.Substring(line.IndexOf("src=\"") + 5).Replace("\"/>", "").Replace("\" />", "");
 
                     string svg = System.IO.File.ReadAllText(svgname);
-                    
+
                     // The id that should be set, like D_Pad_Down
                     string id = svgname.Split('/')[svgname.Split('/').Length - 1].Replace(".svg", "");
 
-                    
+
 
                     // Some SVG's have an id. Remove it, and afterwards add your own
                     string[] splitSvg = System.IO.File.ReadAllLines(svgname);
@@ -113,16 +126,16 @@ namespace xPortableWindows
                         }
                         else if (
                           // If new element (all svg attributes have been assigned), there is no ID to look for
-                          svgLine.StartsWith("<") && 
+                          svgLine.StartsWith("<") &&
                           !svgLine.StartsWith("<svg") &&  // Don't break on the svg
                           !svgLine.StartsWith("<!--") &&  // or a comment
                           !svgLine.StartsWith("<?xml"))  // or the xml declaration
-                            break; 
+                            break;
                     }
-                    
+
 
                     // Add the new ID
-                    svg = svg.Replace("<svg", string.Format( "<svg id={0}", id));
+                    svg = svg.Replace("<svg", string.Format("<svg id={0}", id));
 
                     controllerUI += svg;
                 }
@@ -209,7 +222,8 @@ namespace xPortableWindows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            listener.Stop();
+            //listener.Stop();
+            server.Kill();
         }
 
         private void btnSaveIpAndPort_Click(object sender, RoutedEventArgs e)
