@@ -1,7 +1,6 @@
-// pressed is 1 if pressed, 0 if no longer pressed
+// Assign functions to every button
 
 function SetupUserInterface() {
-
     // Translation table: which code reffers to which control
     var table =
     {
@@ -32,12 +31,6 @@ function SetupUserInterface() {
 
     var buttonIDs = Object.keys(table);
 
-    var Send = function (buttonID, value) {
-        return function send(e) {
-            ws.send(buttonID + "/" + value);
-        }
-    }
-
     // 0-3 are joysticks
     var leftThumbContainer = document.getElementById("leftThumbContainer");
     
@@ -53,6 +46,12 @@ function SetupUserInterface() {
     var rightThumb = document.getElementById("rightThumb");
 
 
+    // value is 1 if pressed, 0 if no longer pressed
+    var Send = function (buttonID, value) {
+        return function send(e) {
+            ws.send(buttonID + "/" + value);
+        }
+    }
     // Start at 2  (joysticks already handled)
     for (var i = 2; i < buttonIDs.length; i++) {
         var button = document.getElementById(buttonIDs[i]);
@@ -75,8 +74,6 @@ SetupUserInterface();
 // For reasons of optimization, it is assumed that:
 // Both joytstick containers have the same width/height
 // And that the width and height of these containers are equal
-
-
 
 
 var leftThumbDown = false;
@@ -150,11 +147,8 @@ function moveLeftJoystick(e) {
     }
 }
 
-function NoLongerMoveJoystick(e){
-    stopMoveLeftJoystick();
-}
-
 function stopMoveLeftJoystick(e) {
+    ws.send("0/0;0");
     leftThumbDown = false;
 
     leftThumb.style.left = "50%";
