@@ -87,6 +87,7 @@
     </ApplicationDefinition>
     <Compile Include="connect.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="KeepServerAlive.cs" />
     <Compile Include="X360.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -129,6 +130,12 @@
     <None Include="httpServer\node_modules\array-flatten\LICENSE" />
     <None Include="httpServer\node_modules\array-flatten\package.json" />
     <None Include="httpServer\node_modules\array-flatten\README.md" />
+    <None Include="httpServer\node_modules\async-limiter\.travis.yml" />
+    <None Include="httpServer\node_modules\async-limiter\coverage\coverage.json" />
+    <None Include="httpServer\node_modules\async-limiter\coverage\lcov.info" />
+    <None Include="httpServer\node_modules\async-limiter\LICENSE" />
+    <None Include="httpServer\node_modules\async-limiter\package.json" />
+    <None Include="httpServer\node_modules\async-limiter\readme.md" />
     <None Include="httpServer\node_modules\body-parser\HISTORY.md" />
     <None Include="httpServer\node_modules\body-parser\LICENSE" />
     <None Include="httpServer\node_modules\body-parser\package.json" />
@@ -334,6 +341,9 @@
     <None Include="httpServer\node_modules\vary\LICENSE" />
     <None Include="httpServer\node_modules\vary\package.json" />
     <None Include="httpServer\node_modules\vary\README.md" />
+    <None Include="httpServer\node_modules\ws\LICENSE" />
+    <None Include="httpServer\node_modules\ws\package.json" />
+    <None Include="httpServer\node_modules\ws\README.md" />
     <None Include="httpServer\package-lock.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -422,6 +432,15 @@
     </Content>
     <Content Include="httpServer\node_modules\accepts\index.js" />
     <Content Include="httpServer\node_modules\array-flatten\array-flatten.js" />
+    <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\async-throttle\index.html" />
+    <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\async-throttle\index.js.html" />
+    <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\base.css" />
+    <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\index.html" />
+    <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\prettify.css" />
+    <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\prettify.js" />
+    <Resource Include="httpServer\node_modules\async-limiter\coverage\lcov-report\sort-arrow-sprite.png" />
+    <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\sorter.js" />
+    <Content Include="httpServer\node_modules\async-limiter\index.js" />
     <Content Include="httpServer\node_modules\body-parser\index.js" />
     <Content Include="httpServer\node_modules\body-parser\lib\read.js" />
     <Content Include="httpServer\node_modules\body-parser\lib\types\json.js" />
@@ -531,7 +550,19 @@
     <Content Include="httpServer\node_modules\unpipe\index.js" />
     <Content Include="httpServer\node_modules\utils-merge\index.js" />
     <Content Include="httpServer\node_modules\vary\index.js" />
-    <Content Include="httpServer\server.js" />
+    <Content Include="httpServer\node_modules\ws\browser.js" />
+    <Content Include="httpServer\node_modules\ws\index.js" />
+    <Content Include="httpServer\node_modules\ws\lib\buffer-util.js" />
+    <Content Include="httpServer\node_modules\ws\lib\constants.js" />
+    <Content Include="httpServer\node_modules\ws\lib\event-target.js" />
+    <Content Include="httpServer\node_modules\ws\lib\extension.js" />
+    <Content Include="httpServer\node_modules\ws\lib\permessage-deflate.js" />
+    <Content Include="httpServer\node_modules\ws\lib\receiver.js" />
+    <Content Include="httpServer\node_modules\ws\lib\sender.js" />
+    <Content Include="httpServer\node_modules\ws\lib\validation.js" />
+    <Content Include="httpServer\node_modules\ws\lib\websocket-server.js" />
+    <Content Include="httpServer\node_modules\ws\lib\websocket.js" />
+    <Content Include="httpServer\xPortableHttpServer.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="controllerUI\css\stylesheet.css">
@@ -555,6 +586,10 @@
   </Target>
   <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
   <PropertyGroup>
-    <PreBuildEvent>pkg -t node8-win-x64 ../../httpServer/server.js</PreBuildEvent>
+    <PreBuildEvent>pkg -t node8-win-x64 ../../httpServer/xPortableHttpServer.js</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

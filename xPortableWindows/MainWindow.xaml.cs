@@ -62,22 +62,12 @@ namespace xPortableWindows
                 ShowOrHideIp(btnShowOrHideIp, null);  // By default it is hidden, so firing this will show it
             }
 
-            server = Process.Start(new ProcessStartInfo()
-            {
-                FileName = "server.exe",
-                UseShellExecute = false,
-                WorkingDirectory = @"S:\Projecten\xPortable\xPortableWindows\bin\Debug",
-                CreateNoWindow = true
-            });
-            
-            //MessageBox.Show(process.StandardOutput.ReadToEnd());
-            //MessageBox.Show(process.StandardError.ReadToEnd());
-
             Globals.client = new ViGEmClient();
 
 
             Globals.wssv = new WebSocketServer(7000);
             Globals.wssv.AddWebSocketService<connect>("/connect");
+            Globals.wssv.AddWebSocketService<KeepServerAlive>("/server");
 
             string[] rawHtml = System.IO.File.ReadAllLines("controllerUI/index.html");
             controllerUI = "";
@@ -143,6 +133,14 @@ namespace xPortableWindows
             }
 
             Globals.wssv.Start();
+
+            server = Process.Start(new ProcessStartInfo()
+            {
+                FileName = "xPortableHttpServer.exe",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            });
+
         }
 
         private void StartHttpServer()
