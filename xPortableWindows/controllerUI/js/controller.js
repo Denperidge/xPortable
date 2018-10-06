@@ -115,7 +115,8 @@ function moveLeftJoystick(e) {
             // On the X-axis, left is -100% and right is 100%
             // On the Y-axis, top should be 100% and bottom -100%
             // however, because CSS has to use left/top for positioning things like this,
-            // recalculations have to be made if styleName == top
+            // top is -100% and bottom is 100%. This is good for style.top, but when
+            // styleName == top, invert the value
 
             if (!mouseOverMin && !mouseOverMax) {
                 leftThumb.style[styleName] = mouseValue + "px";
