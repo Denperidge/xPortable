@@ -25,7 +25,17 @@ namespace xPortableWindows
             Console.WriteLine(eventArgs.LedNumber);
 
             // ledNumber returns 0 for player 1, 1 for player 2, 2 for player 3, 3 for player 4
-            int port = eventArgs.LedNumber + 1;
+            // but on other computers, ledNumber returns 1 for player 1, 2 for player 2 and so on
+            // When the first controller connects (thus when portCalculator isn't defined yet),
+            // if the LedNumber is 0, portCalculator = 1
+            // else, it's 0
+            if (Globals.portCalculator == null)
+            {
+                if (eventArgs.LedNumber == 0) Globals.portCalculator = 1;
+                else Globals.portCalculator = 0;
+            }
+
+            int port = eventArgs.LedNumber + (int)Globals.portCalculator;
             if (port > 4)
             {
                 newController.Disconnect();

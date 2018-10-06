@@ -13,5 +13,6 @@ namespace xPortableWindows
     {
         public static ViGEmClient client; // ViGEm Client to handle controllers
         public static WebSocketServer wssv;  // Websocket to communicate with mobiles
+        public static int? portCalculator;  // See connect.cs for explanation
     }
 }
