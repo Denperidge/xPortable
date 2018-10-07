@@ -1,0 +1,9 @@
+{
+  "name": "xportablehttpserver",
+  "version": "1.0.0",
+  "main": "xPortableHttpServer.js",
+  "dependencies": {
+    "express": "^4.16.3",
+    "ws": "^6.1.0"
+  }
+}
