@@ -1,6 +1,9 @@
 // Assign functions to every button
 
 var leftThumbContainer = document.getElementById("leftThumbContainer");
+var rightThumbContainer = document.getElementById("rightThumbContainer");
+var leftThumb = document.getElementById("leftThumb");
+var rightThumb = document.getElementById("rightThumb");
 
 
 function SetupUserInterface() {
@@ -45,14 +48,11 @@ function SetupUserInterface() {
     document.addEventListener("mouseup", stopMoveLeftJoystick);
     document.addEventListener("touchend", stopMoveLeftJoystick);
 
-    var rightThumb = document.getElementById("rightThumb");
-
 
     // value is 1 if pressed, 0 if no longer pressed
     var Send = function (buttonID, value) {
         return function send(e) {
             ws.send(buttonID + "/" + value);
-            //report += buttonID + "/" + value + "_";
         }
     }
     // Start at 2  (joysticks already handled)
@@ -80,7 +80,6 @@ SetupUserInterface();
 
 
 var leftThumbDown = false;
-var leftThumb = document.getElementById("leftThumb");
 var thumbMax;
 var thumbMiddle;
 var leftContainerLeftOffset;
@@ -97,66 +96,60 @@ function CalculateThumbVariables() {
 window.addEventListener("resize", CalculateThumbVariables);
 CalculateThumbVariables();  // Run once at startup
 
+
+// Calculate how far the joystick is from the center to the box in percentage
+function CalculateThumbValue(mouseValue, styleName) {
+    var mouseOverMin = mouseValue < 0;
+    var mouseOverMax = mouseValue > thumbMax;
+
+    // On the X-axis, left is -100% and right is 100%
+    // On the Y-axis, top should be 100% and bottom -100%
+    // however, because CSS has to use left/top for positioning things like this,
+    // top is -100% and bottom is 100%. This is good for style.top, but when
+    // styleName == top, invert the value
+
+    if (!mouseOverMin && !mouseOverMax) {
+        leftThumb.style[styleName] = mouseValue + "px";
+        var joystickValue = parseInt((mouseValue - thumbMiddle) / thumbMiddle * 100).toString();
+        return joystickValue * ((styleName == "top") ? -1 : 1);
+    }
+    // Don't move the joystick if mouse is outside of the box, just apply min/max value
+    else if (mouseOverMin) {
+        leftThumb.style[styleName] = "0px";
+        return (styleName == "top") ? "100" : "-100";  // %
+        // TODO vibrate
+    } else if (mouseOverMax) {
+        leftThumb.style[styleName] = thumbMax + "px";
+        return (styleName == "top") ? "-100" : "100";  // %
+        // TODO vibrate
+    }
+}
+
 function startMoveLeftJoystick(e) {
     leftThumbDown = true;
     leftThumb.style.left = e.clientX - leftContainerLeftOffset + "px";
     leftThumb.style.top = e.clientY - leftContainerTopOffset + "px";
 }
 
+
 function moveLeftJoystick(e) {
     e.preventDefault();
     if (leftThumbDown) {
-        var value = "0/";
-
-        // Calculate how far the joystick is from the center to the box in percentage
-        function CalculatePercentage(mouseValue, styleName) {
-            var mouseOverMin = mouseValue < 0;
-            var mouseOverMax = mouseValue > thumbMax;
-
-            // On the X-axis, left is -100% and right is 100%
-            // On the Y-axis, top should be 100% and bottom -100%
-            // however, because CSS has to use left/top for positioning things like this,
-            // top is -100% and bottom is 100%. This is good for style.top, but when
-            // styleName == top, invert the value
-
-            if (!mouseOverMin && !mouseOverMax) {
-                leftThumb.style[styleName] = mouseValue + "px";
-                var joystickValue = parseInt((mouseValue - thumbMiddle) / thumbMiddle * 100).toString();
-                //console.log(joystickValue);
-                value += joystickValue * ((styleName == "top") ? -1 : 1);
-            }
-            // Don't move the joystick if mouse is outside of the box, just apply min/max value
-            else if (mouseOverMin) {
-                leftThumb.style[styleName] = "0px";
-                value += (styleName == "top") ? "100" : "-100";  // %
-                // TODO vibrate
-            } else if (mouseOverMax) {
-                leftThumb.style[styleName] = thumbMax + "px";
-                value += (styleName == "top") ? "-100" : "100";  // %
-                // TODO vibrate
-            }
-        }
-
         var mouseX = (e.clientX - leftContainerLeftOffset) || (e.targetTouches[0].clientX - leftContainerLeftOffset);
         var mouseY = e.clientY - leftContainerTopOffset || (e.targetTouches[0].clientY - leftContainerTopOffset);
 
-        CalculatePercentage(mouseX, "left");
-        value += ";"
-        CalculatePercentage(mouseY, "top");
-
-        ws.send(value);
+        ws.send(
+            "0/"
+            + CalculateThumbValue(mouseX, "left")
+            + ";"
+            + CalculateThumbValue(mouseY, "top")
+        );
     }
 }
 
-var inter;
-
 function stopMoveLeftJoystick(e) {
     // stopMoveJoystick is set to the document, thus releasing another button would cause the joystick to re-center
-    console.log(e);
     if (e.srcElement != leftThumb && e.srcElement != leftThumbContainer) return;
-    console.log(e);
-    clearInterval(inter);
-    //report += "0/0;0_";
     ws.send("0/0;0");
     leftThumbDown = false;
 
