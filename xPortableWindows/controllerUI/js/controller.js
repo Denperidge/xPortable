@@ -1,5 +1,8 @@
 // Assign functions to every button
 
+var leftThumbContainer = document.getElementById("leftThumbContainer");
+
+
 function SetupUserInterface() {
     // Translation table: which code reffers to which control
     var table =
@@ -31,8 +34,7 @@ function SetupUserInterface() {
 
     var buttonIDs = Object.keys(table);
 
-    // 0-3 are joysticks
-    var leftThumbContainer = document.getElementById("leftThumbContainer");
+    // 0-1 are joysticks
 
     leftThumbContainer.addEventListener("mousedown", startMoveLeftJoystick);
     leftThumbContainer.addEventListener("touchstart", startMoveLeftJoystick);
@@ -49,8 +51,8 @@ function SetupUserInterface() {
     // value is 1 if pressed, 0 if no longer pressed
     var Send = function (buttonID, value) {
         return function send(e) {
-            //ws.send(buttonID + "/" + value);
-            report += buttonID + "/" + value + "_";
+            ws.send(buttonID + "/" + value);
+            //report += buttonID + "/" + value + "_";
         }
     }
     // Start at 2  (joysticks already handled)
@@ -120,7 +122,7 @@ function moveLeftJoystick(e) {
             if (!mouseOverMin && !mouseOverMax) {
                 leftThumb.style[styleName] = mouseValue + "px";
                 var joystickValue = parseInt((mouseValue - thumbMiddle) / thumbMiddle * 100).toString();
-                console.log(joystickValue);
+                //console.log(joystickValue);
                 value += joystickValue * ((styleName == "top") ? -1 : 1);
             }
             // Don't move the joystick if mouse is outside of the box, just apply min/max value
@@ -135,7 +137,6 @@ function moveLeftJoystick(e) {
             }
         }
 
-        console.log(e);
         var mouseX = (e.clientX - leftContainerLeftOffset) || (e.targetTouches[0].clientX - leftContainerLeftOffset);
         var mouseY = e.clientY - leftContainerTopOffset || (e.targetTouches[0].clientY - leftContainerTopOffset);
 
@@ -143,29 +144,22 @@ function moveLeftJoystick(e) {
         value += ";"
         CalculatePercentage(mouseY, "top");
 
-        //ws.send(value);
-        report += value + "_";
-        inter = setInterval(function () { report += value + "_"; }, 100)
+        ws.send(value);
     }
 }
 
 var inter;
 
 function stopMoveLeftJoystick(e) {
+    // stopMoveJoystick is set to the document, thus releasing another button would cause the joystick to re-center
+    console.log(e);
+    if (e.srcElement != leftThumb && e.srcElement != leftThumbContainer) return;
+    console.log(e);
     clearInterval(inter);
-    report += "0/0;0_";
+    //report += "0/0;0_";
+    ws.send("0/0;0");
     leftThumbDown = false;
 
     leftThumb.style.left = "50%";
     leftThumb.style.top = "50%";
 }
-
-var report = "";
-// WebSocket code
-setInterval(function () {
-    if (report != "") {
-        console.log(report);
-        ws.send(report);
-        report = "";
-    }
-}, 100);

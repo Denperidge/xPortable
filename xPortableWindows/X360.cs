@@ -22,6 +22,7 @@ namespace xPortableWindows
         Label lblStatus;
         Button btnDisconnect;
         bool disconnected;
+        Xbox360Report report;
 
 
         public X360(Xbox360Controller pController, int pPort, Label pLblStatus, Button pBtnDisconnect)
@@ -31,6 +32,7 @@ namespace xPortableWindows
             lblStatus = pLblStatus;
             btnDisconnect = pBtnDisconnect;
             disconnected = false;
+            report = new Xbox360Report();
         }
 
 
@@ -46,15 +48,13 @@ namespace xPortableWindows
 
         protected override void OnMessage(MessageEventArgs e)
         {
-            Xbox360Report report = new Xbox360Report();
-
             string[] buttonPresses = e.Data.Split('_');
             Console.WriteLine("Data: " + e.Data);
 
             foreach (string buttonPress in buttonPresses)
             {
                 if (buttonPress.IsNullOrEmpty()) continue;
-                Console.WriteLine("buttonpress: " + buttonPress);
+                //Console.WriteLine("buttonpress: " + buttonPress);
                 string button = buttonPress.Split('/')[0];
                 string value = buttonPress.Split('/')[1];
 
