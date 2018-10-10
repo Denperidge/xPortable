@@ -438,6 +438,7 @@
     <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\index.html" />
     <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\prettify.css" />
     <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\prettify.js" />
+    <Content Include="websocket-sharp.dll" />
     <Resource Include="httpServer\node_modules\async-limiter\coverage\lcov-report\sort-arrow-sprite.png" />
     <Content Include="httpServer\node_modules\async-limiter\coverage\lcov-report\sorter.js" />
     <Content Include="httpServer\node_modules\async-limiter\index.js" />
