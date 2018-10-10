@@ -45,8 +45,14 @@ function SetupUserInterface() {
     leftThumbContainer.addEventListener("mousemove", moveLeftJoystick);
     leftThumbContainer.addEventListener("touchmove", moveLeftJoystick);
 
-    document.addEventListener("mouseup", stopMoveLeftJoystick);
-    document.addEventListener("touchend", stopMoveLeftJoystick);
+    rightThumbContainer.addEventListener("mousedown", startMoveRightJoystick);
+    rightThumbContainer.addEventListener("touchstart", startMoveRightJoystick);
+
+    rightThumbContainer.addEventListener("mousemove", moveRightJoystick);
+    rightThumbContainer.addEventListener("touchmove", moveRightJoystick);
+
+    document.addEventListener("mouseup", stopMoveJoystick);
+    document.addEventListener("touchend", stopMoveJoystick);
 
 
     // value is 1 if pressed, 0 if no longer pressed
@@ -80,10 +86,13 @@ SetupUserInterface();
 
 
 var leftThumbDown = false;
+var rightThumbDown = false;
 var thumbMax;
 var thumbMiddle;
 var leftContainerLeftOffset;
 var leftContainerTopOffset;
+var rightContainerLeftOffset;
+var rightContainerTopOffset;
 
 // Calculate the middle and max values of the joysticks
 function CalculateThumbVariables() {
@@ -92,13 +101,16 @@ function CalculateThumbVariables() {
 
     leftContainerLeftOffset = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).left.replace("px", ""));
     leftContainerTopOffset = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).top.replace("px", ""));
+
+    rightContainerLeftOffset = parseInt(getComputedStyle(document.getElementById("rightThumbContainer")).left.replace("px", ""));
+    rightContainerTopOffset = parseInt(getComputedStyle(document.getElementById("rightThumbContainer")).top.replace("px", ""));
 }
 window.addEventListener("resize", CalculateThumbVariables);
 CalculateThumbVariables();  // Run once at startup
 
 
 // Calculate how far the joystick is from the center to the box in percentage
-function CalculateThumbValue(mouseValue, styleName) {
+function CalculateLeftThumbValue(mouseValue, styleName) {
     var mouseOverMin = mouseValue < 0;
     var mouseOverMax = mouseValue > thumbMax;
 
@@ -125,6 +137,34 @@ function CalculateThumbValue(mouseValue, styleName) {
     }
 }
 
+function CalculateRightThumbValue(mouseValue, styleName) {
+    var mouseOverMin = mouseValue < 0;
+    var mouseOverMax = mouseValue > thumbMax;
+
+    // On the X-axis, left is -100% and right is 100%
+    // On the Y-axis, top should be 100% and bottom -100%
+    // however, because CSS has to use left/top for positioning things like this,
+    // top is -100% and bottom is 100%. This is good for style.top, but when
+    // styleName == top, invert the value
+
+    if (!mouseOverMin && !mouseOverMax) {
+        rightThumb.style[styleName] = mouseValue + "px";
+        var joystickValue = parseInt((mouseValue - thumbMiddle) / thumbMiddle * 100).toString();
+        return joystickValue * ((styleName == "top") ? -1 : 1);
+    }
+    // Don't move the joystick if mouse is outside of the box, just apply min/max value
+    else if (mouseOverMin) {
+        rightThumb.style[styleName] = "0px";
+        return (styleName == "top") ? "100" : "-100";  // %
+        // TODO vibrate
+    } else if (mouseOverMax) {
+        rightThumb.style[styleName] = thumbMax + "px";
+        return (styleName == "top") ? "-100" : "100";  // %
+        // TODO vibrate
+    }
+}
+
+
 function startMoveLeftJoystick(e) {
     leftThumbDown = true;
     leftThumb.style.left = e.clientX - leftContainerLeftOffset + "px";
@@ -136,23 +176,53 @@ function moveLeftJoystick(e) {
     e.preventDefault();
     if (leftThumbDown) {
         var mouseX = (e.clientX - leftContainerLeftOffset) || (e.targetTouches[0].clientX - leftContainerLeftOffset);
-        var mouseY = e.clientY - leftContainerTopOffset || (e.targetTouches[0].clientY - leftContainerTopOffset);
+        var mouseY = (e.clientY - leftContainerTopOffset) || (e.targetTouches[0].clientY - leftContainerTopOffset);
 
         ws.send(
             "0/"
-            + CalculateThumbValue(mouseX, "left")
+            + CalculateLeftThumbValue(mouseX, "left")
             + ";"
-            + CalculateThumbValue(mouseY, "top")
+            + CalculateLeftThumbValue(mouseY, "top")
         );
     }
 }
 
-function stopMoveLeftJoystick(e) {
-    // stopMoveJoystick is set to the document, thus releasing another button would cause the joystick to re-center
-    if (e.srcElement != leftThumb && e.srcElement != leftThumbContainer) return;
-    ws.send("0/0;0");
-    leftThumbDown = false;
 
-    leftThumb.style.left = "50%";
-    leftThumb.style.top = "50%";
+function startMoveRightJoystick(e) {
+    rightThumbDown = true;
+    rightThumb.style.left = e.clientX - rightContainerLeftOffset + "px";
+    rightThumb.style.top = e.clientY - rightContainerTopOffset + "px";
+}
+
+
+function moveRightJoystick(e) {
+    e.preventDefault();
+    if (rightThumbDown) {
+        var mouseX = (e.clientX - rightContainerLeftOffset) || (e.targetTouches[0].clientX - rightContainerLeftOffset);
+        var mouseY = (e.clientY - rightContainerTopOffset) || (e.targetTouches[0].clientY - rightContainerTopOffset);
+
+        ws.send(
+            "1/"
+            + CalculateRightThumbValue(mouseX, "left")
+            + ";"
+            + CalculateRightThumbValue(mouseY, "top")
+        );
+    }
+}
+
+function stopMoveJoystick(e) {
+    // stopMoveJoystick is set to the document, thus releasing another button would cause the joystick to re-center
+    if (e.srcElement == leftThumb || e.srcElement == leftThumbContainer) {
+        ws.send("0/0;0");
+        leftThumbDown = false;
+
+        leftThumb.style.left = "50%";
+        leftThumb.style.top = "50%";
+    } else if (e.srcElement == rightThumb || e.srcElement == rightThumbContainer) {
+        ws.send("1/0;0");
+        rightThumbDown = false;
+
+        rightThumb.style.left = "50%";
+        rightThumb.style.top = "50%";
+    }
 }

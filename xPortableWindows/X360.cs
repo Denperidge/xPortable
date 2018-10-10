@@ -62,6 +62,8 @@ namespace xPortableWindows
                         report.SetAxis(Xbox360Axes.LeftThumbY, (short)(32767 * int.Parse(percentages[1]) / 100));
                         break;
                     case "1":
+                        report.SetAxis(Xbox360Axes.RightThumbX, (short)(32767 * int.Parse(percentages[0]) / 100));
+                        report.SetAxis(Xbox360Axes.RightThumbY, (short)(32767 * int.Parse(percentages[1]) / 100));
                         break;
                 }
             }
