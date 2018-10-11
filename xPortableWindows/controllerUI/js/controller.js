@@ -1,7 +1,4 @@
 // Assign functions to every button
-
-var leftThumbContainer = document.getElementById("leftThumbContainer");
-var rightThumbContainer = document.getElementById("rightThumbContainer");
 var leftThumb = document.getElementById("leftThumb");
 var rightThumb = document.getElementById("rightThumb");
 
@@ -38,6 +35,9 @@ function SetupUserInterface() {
     var buttonIDs = Object.keys(table);
 
     // 0-1 are joysticks
+
+    var leftThumbContainer = document.getElementById("leftThumbContainer");
+    var rightThumbContainer = document.getElementById("rightThumbContainer");
 
     leftThumbContainer.addEventListener("mousedown", startMoveLeftJoystick);
     leftThumbContainer.addEventListener("touchstart", startMoveLeftJoystick);
@@ -97,24 +97,29 @@ var screenMiddle;
 
 // Calculate the middle and max values of the joysticks
 function CalculateThumbVariables() {
+    var leftThumbContainer = document.getElementById("leftThumbContainer");
+    var leftThumbMax = document.getElementById("leftThumbMax");
+    var rightThumbContainer = document.getElementById("rightThumbContainer");
+    var rightThumbMax = document.getElementById("rightThumbMax");
+
     thumbMin = parseInt(getComputedStyle(document.getElementById("leftThumbMax")).marginLeft.replace("px", ""));
-    thumbMax = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).width.replace("px", "")) - thumbMin;
+    thumbMax = parseInt(getComputedStyle(leftThumbContainer).width.replace("px", "")) - thumbMin;
     thumbMiddle = thumbMax / 2;
 
     leftMaxLeftOffset =
-        parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).left.replace("px", "")) +
-        parseInt(getComputedStyle(document.getElementById("leftThumbMax")).marginLeft.replace("px", ""));
+        parseInt(getComputedStyle(leftThumbContainer).left.replace("px", "")) +
+        parseInt(getComputedStyle(leftThumbMax).marginLeft.replace("px", ""));
     leftMaxTopOffset =
-        parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).top.replace("px", "")) +
-        parseInt(getComputedStyle(document.getElementById("leftThumbMax")).marginTop.replace("px", ""));
+        parseInt(getComputedStyle(leftThumbContainer).top.replace("px", "")) +
+        parseInt(getComputedStyle(leftThumbMax).marginTop.replace("px", ""));
 
 
     rightMaxLeftOffset =
-        parseInt(getComputedStyle(document.getElementById("rightThumbContainer")).left.replace("px", "")) +
-        parseInt(getComputedStyle(document.getElementById("rightThumbMax")).marginRight.replace("px", ""));
+        parseInt(getComputedStyle(rightThumbContainer).left.replace("px", "")) +
+        parseInt(getComputedStyle(rightThumbMax).marginRight.replace("px", ""));
     rightMaxTopOffset =
-        parseInt(getComputedStyle(document.getElementById("rightThumbContainer")).top.replace("px", "")) +
-        parseInt(getComputedStyle(document.getElementById("rightThumbMax")).marginTop.replace("px", ""));
+        parseInt(getComputedStyle(rightThumbContainer).top.replace("px", "")) +
+        parseInt(getComputedStyle(rightThumbMax).marginTop.replace("px", ""));
 
     screenMiddle = window.innerWidth / 2;
 }
