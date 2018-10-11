@@ -54,8 +54,6 @@ function SetupUserInterface() {
     document.addEventListener("mouseup", stopMoveJoystick);
     document.addEventListener("touchend", stopMoveJoystick);
 
-    return;
-
     // value is 1 if pressed, 0 if no longer pressed
     var Send = function (buttonID, value) {
         return function send(e) {
@@ -75,7 +73,7 @@ function SetupUserInterface() {
         button.addEventListener("touchstart", Send(id, "1"));
         button.addEventListener("touchend", Send(id, "0"));
         button.addEventListener("touchcancel", Send(id, "0"));
-    }
+    }   
 }
 SetupUserInterface();
 
