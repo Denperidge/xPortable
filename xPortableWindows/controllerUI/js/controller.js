@@ -215,41 +215,19 @@ function moveRightJoystick(e) {
     }
 }
 
-function ResetLeftJoystick() {
-    //ws.send("0/0;0");
-    leftThumbDown = false;
-
-    leftThumb.style.left = "50%";
-    leftThumb.style.top = "50%";
-}
-
-function ResetRightJoystick() {
-    //ws.send("1/0;0");
-    rightThumbDown = false;
-
-    rightThumb.style.left = "50%";
-    rightThumb.style.top = "50%";
-}
-
 function stopMoveJoystick(e) {
-    if (!leftThumbDown && !rightThumbDown) return;
-    // If mouse up from any of the joysticks, just reset that one
-    if (leftThumbDown && e.target == leftThumb) ResetLeftJoystick();
+    if (leftThumbDown && e.clientX <= screenMiddle) {
+        ws.send("0/0;0");
+        leftThumbDown = false;
 
-    else if (rightThumbDown && e.target == rightThumb) ResetRightJoystick();
+        leftThumb.style.left = "50%";
+        leftThumb.style.top = "50%";
+    }
+    else if (rightThumbDown && e.clientX > screenMiddle) {
+        ws.send("1/0;0");
+        rightThumbDown = false;
 
-    // If mouseup from document (not another button)
-    else if (e.target == document.body) {
-        // If left thumb is held down
-        if (leftThumbDown) {
-            // And not right thumb, it's safe to assume the left is released
-            if (!rightThumbDown) ResetLeftJoystick();
-            // If both are held down, check if the left or right finger has been released
-            else if (e.screenX <= screenMiddle) ResetLeftJoystick();
-            // Do the same for right joystick
-        } else if (rightThumbDown) {
-            if (!leftThumbDown) ResetRightJoystick();
-            else if (e.screenX > screenMiddle) ResetRightJoystick();
-        }
+        rightThumb.style.left = "50%";
+        rightThumb.style.top = "50%";
     }
 }
