@@ -175,8 +175,8 @@ function startMoveLeftJoystick(e) {
 function moveLeftJoystick(e) {
     e.preventDefault();
     if (leftThumbDown) {
-        var mouseX = (e.clientX - leftMaxLeftOffset + thumbMin) || (e.targetTouches[0].clientX - leftMaxLeftOffset + thumbMin);
-        var mouseY = (e.clientY - leftMaxTopOffset + thumbMin) || (e.targetTouches[0].clientY - leftMaxTopOffset + thumbMin);
+        var mouseX = (e.clientX - leftMaxLeftOffset + thumbMin) || (e.changedTouches[0].clientX - leftMaxLeftOffset + thumbMin);
+        var mouseY = (e.clientY - leftMaxTopOffset + thumbMin) || (e.changedTouches[0].clientY - leftMaxTopOffset + thumbMin);
         ws.send(
             "0/"
             + CalculateThumbValue(leftThumb, mouseX, "left")
@@ -218,19 +218,34 @@ function moveRightJoystick(e) {
     }
 }
 
+function ResetLeftJoystick() {
+    ws.send("0/0;0");
+    leftThumbDown = false;
+
+    leftThumb.style.left = "50%";
+    leftThumb.style.top = "50%";
+}
+
+function ResetRightJoystick() {
+    ws.send("1/0;0");
+    rightThumbDown = false;
+
+    rightThumb.style.left = "50%";
+    rightThumb.style.top = "50%";
+}
+
 function stopMoveJoystick(e) {
-    if (leftThumbDown && e.clientX <= screenMiddle) {
-        ws.send("0/0;0");
-        leftThumbDown = false;
+    var mouseX = e.changedTouches[0].clientX || e.clientX;
 
-        leftThumb.style.left = "50%";
-        leftThumb.style.top = "50%";
-    }
-    else if (rightThumbDown && e.clientX > screenMiddle) {
-        ws.send("1/0;0");
-        rightThumbDown = false;
-
-        rightThumb.style.left = "50%";
-        rightThumb.style.top = "50%";
+    // If left thumb is held down
+    if (leftThumbDown) {
+        // And not right thumb, it's safe to assume the left is released
+        if (!rightThumbDown) ResetLeftJoystick();
+        // If both are held down, check if the left or right finger has been released
+        else if (mouseX <= screenMiddle) ResetLeftJoystick();
+        // Do the same for right joystick
+    } else if (rightThumbDown) {
+        if (!leftThumbDown) ResetRightJoystick();
+        else if (mouseX > screenMiddle) ResetRightJoystick();
     }
 }
