@@ -98,9 +98,7 @@ var screenMiddle;
 // Calculate the middle and max values of the joysticks
 function CalculateThumbVariables() {
     thumbMin = parseInt(getComputedStyle(document.getElementById("leftThumbMax")).marginLeft.replace("px", ""));
-    //thumbMax = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).width.replace("px", ""));
     thumbMax = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).width.replace("px", "")) - thumbMin;
-    //thumbMax = parseInt(getComputedStyle(document.getElementById("leftThumbContainer")).width.replace("px", ""));
     thumbMiddle = thumbMax / 2;
 
     leftMaxLeftOffset =
