@@ -237,15 +237,8 @@ function ResetRightJoystick() {
 function stopMoveJoystick(e) {
     var mouseX = e.changedTouches[0].clientX || e.clientX;
 
-    // If left thumb is held down
-    if (leftThumbDown) {
-        // And not right thumb, it's safe to assume the left is released
-        if (!rightThumbDown) ResetLeftJoystick();
-        // If both are held down, check if the left or right finger has been released
-        else if (mouseX <= screenMiddle) ResetLeftJoystick();
-        // Do the same for right joystick
-    } else if (rightThumbDown) {
-        if (!leftThumbDown) ResetRightJoystick();
-        else if (mouseX > screenMiddle) ResetRightJoystick();
-    }
+    // If left thumb is held down and left finger is released, release left joystick
+    if (leftThumbDown && mouseX <= screenMiddle) ResetLeftJoystick();
+    // Do the same for right joystick
+    else if (rightThumbDown&& mouseX > screenMiddle) ResetRightJoystick();
 }
