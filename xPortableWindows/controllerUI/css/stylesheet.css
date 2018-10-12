@@ -71,13 +71,27 @@ body {
 
 #LT, #LB {
     left: 0;
+}
+
+#LT {
     right: 70%;
+}
+
+#LB {
+    right: 85%;
 }
 
 #RT, #RB {
     right: 0;
-    left: 70%;
     justify-content: flex-end;
+}
+
+#RT {
+    left: 70%;
+}
+
+#RB {
+    left: 85%;
 }
 
 #RT img, #RB img {
@@ -91,8 +105,8 @@ body {
 }
 
 .nineBtn {
-    height: 40vh;
-    width: 40vh;
+    height: 65vh;
+    width: 65vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -109,33 +123,74 @@ body {
 }
 
 
-/* Applies to first and last 3 divs of element (up, down, upleft, downright...) */ 
+/* Applies to first and last 3 divs of element (up, down, upleft, downright...)  
 .nineBtn div:nth-of-type(-n+3) img, 
 .nineBtn div:nth-of-type(n+3) img  {
     width: auto;
     height: 80%;
-}
+}*/
 
 
-/* Applies to middle 3 divs of element (left, middle, right) */
+/* Applies to middle 3 divs of element (left, middle, right) 
 .nineBtn div:nth-of-type(4) img,
 .nineBtn div:nth-of-type(5) img,
 .nineBtn div:nth-of-type(6) img {
     width: 80%;
     height: auto;
-}
+}*/
 
 
 #D_Pad {
-    left: 20%;
-    top: 40%;
-    background-color: purple;
+    left: 15%;
+    top: 20%;
+}
+/*
+#D_Pad_Up, #D_Pad_Left, #D_Pad_Down, #D_Pad_Right, #A, #X, #Y, #B {
+    width: 80%;
+    
+    background-color: orange;
+}
+*/
+
+
+.nineBtn div {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 40%;
+}
+
+.nineBtn .left img, .nineBtn .right img {
+    width: 80%;
+    height: auto;
+}
+
+.nineBtn .top img, .nineBtn .bottom img {
+    width: auto;
+    height: 80%;
+}
+
+.nineBtn .left {
+    left: 0;
+}
+
+.nineBtn .top {
+    top: 0;
+}
+
+.nineBtn .right {
+    right: 0;
+}
+
+.nineBtn .bottom {
+    bottom: 0;
 }
 
 #letters {
-    right: 20%;
-    top: 40%;
-    background-color: purple;
+    right: 15%;
+    top: 20%;
 }
 
 .thumbContainer {
