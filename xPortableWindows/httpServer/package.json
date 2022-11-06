@@ -4,6 +4,6 @@
   "main": "xPortableHttpServer.js",
   "dependencies": {
     "express": "^4.16.3",
-    "ws": "^6.1.0"
+    "ws": "^6.2.2"
   }
 }
